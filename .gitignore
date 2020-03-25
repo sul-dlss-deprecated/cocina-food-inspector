@@ -1,0 +1,10 @@
+# no certs
+**/*.crt
+
+# no keys
+**/*.key
+
+# no prod configs
+**/production.y*ml
+
+.ruby-version

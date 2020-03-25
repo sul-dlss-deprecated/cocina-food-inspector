@@ -1,0 +1,13 @@
+source 'https://rubygems.org'
+
+gem 'config'
+gem 'delayed_job'
+gem 'delayed_job_active_record'
+gem 'dor-services'
+gem 'faraday'
+gem 'honeybadger', '~> 4.1'
+gem 'pry-byebug'
+gem 'pry-rails'
+gem 'rails', '~> 5.2.1'
+gem 'rake'
+gem 'sqlite3'
