@@ -4,7 +4,12 @@
 # no keys (covers /config/master.key)
 **/*.key
 
-# no prod configs
-**/production.y*ml
+# no prod configs (cast a wide net and avoid anything that looks like a prod yml file)
+**/production*y*ml
+
+# don't check in files w/ the default fedora druid dump filename pattern
+**/all_pids_*
 
 .ruby-version
+log/**
+tmp/**
