@@ -8,10 +8,11 @@ This project will attempt to pass existing digital repository objects from Fedor
 
 1. clone this project, `bundle install`
 1. clone shared_configs, checkout the branch for this project, and copy `config/settings/production.yml` to the corresponding location in this project's working dir (it's in the `.gitignore` so that it's harder to accidentally commit)
+1. if you are running this from your laptop, sign onto the VPN
 1. `RAILS_ENV=production be rails c`
 1. 
 ```ruby
-[1] pry(main)> require('dsa_client')
+[1] pry(main)> require('dsa_client') # i had to do this once to get things to work while developing, but then i got warnings when doing it again later, maybe something related to spring?
 => true
 [2] pry(main)> DsaClient.object_show('druid:bb000kg4251')
 => #<Faraday::Response:0x00007ff09051c100 ...lots of stuff... >
