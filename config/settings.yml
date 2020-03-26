@@ -1,6 +1,6 @@
 cocina_output:
   success:
-    should_output: false
+    should_output: true
     location: 'log/cocina_output/success/'
   failure:
     should_output: true
