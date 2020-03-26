@@ -4,6 +4,9 @@
 # no keys (covers /config/master.key)
 **/*.key
 
+# generate per instance on setup, see instructions
+config/credentials.yml.enc
+
 # no prod configs (cast a wide net and avoid anything that looks like a prod yml file)
 **/production*y*ml
 

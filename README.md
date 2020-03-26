@@ -7,6 +7,7 @@ This project will attempt to pass existing digital repository objects from Fedor
 ## show a druid using this project's rails console
 
 1. clone this project, `bundle install`
+1. `EDITOR=vi RAILS_ENV=production ./bin/rails credentials:edit` and just save the results (you may sub your editor of choice in the `EDITOR` env var)
 1. clone shared_configs, checkout the branch for this project, and copy `config/settings/production.yml` to the corresponding location in this project's working dir (it's in the `.gitignore` so that it's harder to accidentally commit)
 1. if you are running this from your laptop, sign onto the VPN
 1. `RAILS_ENV=production be rails c`
@@ -94,6 +95,8 @@ Druid.add_new_druids_from_file('all_pids_2020-03-25_01:33:07')
 
 You can build on this example to find batches of things to queue up for inspection once you've adequately populated the druid list per the above instructions.
 
+This particular query is probably better done via the `Druid.unretrieved` scope, but leaving here for now for illustrative purposes.
+
 ```ruby
 [19] pry(main)> Druid.where.not(id: DruidRetrievalAttempt.select(:druid_id).distinct).limit(10).pluck(:druid)
    (0.4ms)  SELECT  "druids"."druid" FROM "druids" WHERE "druids"."id" NOT IN (SELECT DISTINCT "druid_retrieval_attempts"."druid_id" FROM "druid_retrieval_attempts") LIMIT ?  [["LIMIT", 10]]
@@ -146,12 +149,57 @@ Omit the `max_to_retrieve` param, and it defaults to 200.  That default is confi
 ### how many unretrieved druids are left in the DB?
 
 ```ruby
-Druid.unretrieved.count
+Druid.unretrieved.count # more composable scope version of example above
 ```
 
-## run this code on the shared deployment environment (a.k.a. how to run this on john's burndown box)
+## use this project on the shared deployment environment (a.k.a. how to run this on john's burndown box)
 
+```sh
+$ ssh dor@dlss-dev-suntzu
+[dor@dlss-dev-suntzu ~]$ cd cocina-food-inspector/
+[dor@dlss-dev-suntzu cocina-food-inspector]$ git pull
+[dor@dlss-dev-suntzu cocina-food-inspector]$ bundle install
+[dor@dlss-dev-suntzu cocina-food-inspector]$
+[dor@dlss-dev-suntzu cocina-food-inspector]$ ssh lyberadmin@sul-dor-prod ruby dump_fedora_pids.rb # if you want a fresh list of druids, one may already be available
 
+pid dump should be in /tmp/all_pids_2020-03-25_22:56:48
+[dor@dlss-dev-suntzu cocina-food-inspector]$ scp lyberadmin@sul-dor-prod:'/tmp/all_pids_2020-03-25_22:56:48' .
+all_pids_2020-03-25_22:56:48                                                               100%   35MB 113.4MB/s   00:00
+[dor@dlss-dev-suntzu cocina-food-inspector]$
+[dor@dlss-dev-suntzu cocina-food-inspector]$ screen # because some of what follows could take a while
+[dor@dlss-dev-suntzu cocina-food-inspector]$
+[dor@dlss-dev-suntzu cocina-food-inspector]$ ./bin/rails c -e production
+Loading production environment (Rails 5.2.4.2)
+[1] pry(main)> Druid.count
+   (0.2ms)  SELECT COUNT(*) FROM "druids"
+=> 0
+[2] pry(main)> Druid.add_new_druids_from_file('all_pids_2020-03-25_22:56:48', limit_adds: 100)
+filename=all_pids_2020-03-25_22:56:48 ; limit_adds=100 ; limit_readlines=
+Druid.add_new_druids_from_file: cur_druid=changeme:5
+   (0.1ms)  begin transaction
+  Druid Create (0.4ms)  INSERT INTO "druids" ("druid", "created_at", "updated_at") VALUES (?, ?, ?)  [["druid", "changeme:5"], ["created_at", "2020-03-26 06:45:58.475745"], ["updated_at", "2020-03-26 06:45:58.475745"]]
+   (6.4ms)  commit transaction
+Druid.add_new_druids_from_file: cur_druid=druid:bb000kg4251
+   (0.0ms)  begin transaction
+  Druid Create (0.2ms)  INSERT INTO "druids" ("druid", "created_at", "updated_at") VALUES (?, ?, ?)  [["druid", "druid:bb000kg4251"], ["created_at", "2020-03-26 06:45:58.484419"], ["updated_at", "2020-03-26 06:45:58.484419"]]
+   (5.5ms)  commit transaction
+...
+   (0.0ms)  begin transaction
+  Druid Create (0.2ms)  INSERT INTO "druids" ("druid", "created_at", "updated_at") VALUES (?, ?, ?)  [["druid", "druid:bb020ty1503"], ["created_at", "2020-03-26 06:45:59.597188"], ["updated_at", "2020-03-26 06:45:59.597188"]]
+   (18.3ms)  commit transaction
+Druid.add_new_druids_from_file: cur_druid=druid:bb021gq9678
+Druid.add_new_druids_from_file: finished -- num_lines_read=101 ; num_adds=100
+=> true
+[3] pry(main)> Druid.count
+   (0.2ms)  SELECT COUNT(*) FROM "druids"
+=> 100
+[4] pry(main)> CocinaDruidRetriever.try_retrieving_unseen_druids(max_to_retrieve: 5)
+...some output as described above...
+[5] pry(main)> Druid.add_new_druids_from_file('all_pids_2020-03-25_22:56:48') # try to load all the pids we have.  this is where you'll be glad you're in `screen`.
+...tons and tons of output logging file reads and DB inserts...
+[6] pry(main)> CocinaDruidRetriever.try_retrieving_unseen_druids(max_to_retrieve: 500) # now you can just start plugging away at the backlog and examining results later
+...
+```
 
 ## run tests on this codebase
 
