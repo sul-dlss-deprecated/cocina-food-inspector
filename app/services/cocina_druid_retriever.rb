@@ -17,33 +17,49 @@ class CocinaDruidRetriever
     response = DsaClient.object_show(druid)
     if response.status == 200
       Rails.logger.info("success: 200 OK retrieving #{druid}")
-      write_cocina_success_to_file(response)
+      output_filename = write_cocina_success_to_file(response)
     else
       Rails.logger.warn("failure: #{response.status} #{response.reason_phrase} retrieving #{druid} : #{response.body}")
-      write_cocina_failure_to_file(response)
+      output_filename = write_cocina_failure_to_file(response)
     end
+    insert_druid_retrieval_attempt(response.status, response.reason_phrase, output_filename)
 
     response
   end
 
   private
 
+  # if there isn't already a DB entry for the druid, create one, otherwise just return what we already have
+  def druid_db_obj
+    @druid_db_obj ||= Druid.find_or_create_by!(druid: druid)
+  end
+
+  def insert_druid_retrieval_attempt(response_status, response_reason_phrase, output_path)
+    DruidRetrievalAttempt.create!(
+      druid: druid_db_obj.reload, response_status: response_status, response_reason_phrase: response_reason_phrase, output_path: output_path
+    )
+  end
+
+  # returns the name of the output file
   def write_cocina_success_to_file(response)
     return unless Settings.cocina_output.success.should_output
     write_druid_response_to_file(Settings.cocina_output.success.location, JSON.pretty_generate(response.to_hash))
   end
 
+  # returns the name of the output file
   def write_cocina_failure_to_file(response)
     return unless Settings.cocina_output.failure.should_output
     write_druid_response_to_file(Settings.cocina_output.failure.location, JSON.pretty_generate(response.to_hash))
   end
 
+  # returns the name of the output file
   def write_druid_response_to_file(output_path, druid_output)
     output_filename = File.join(output_path, druid_path)
     ensure_containing_dir(output_filename)
     File.open(output_filename, 'w') do |file|
       file.write(druid_output)
     end
+    output_filename
   end
 
   # TODO: broken out into its own method because we'll likely want to use druid

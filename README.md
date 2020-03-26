@@ -78,6 +78,41 @@ all_pids_2020-03-25_01:33:07                                                    
 $
 ```
 
+## load druids from a file into the DB
+
+In rails console:
+
+```ruby
+# can remove either or both limits if desired, default is to just do try adding whole input file.  dupes will be ignored.
+Druid.add_new_druids_from_file('all_pids_2020-03-25_01:33:07', limit_readlines: 1000, limit_adds: 2000)
+
+# might take a while if you do a file with all the druids
+Druid.add_new_druids_from_file('all_pids_2020-03-25_01:33:07')
+```
+
+## grab 10 druids that we have not yet recorded any events for in the DB
+
+You can build on this example to find batches of things to queue up for inspection once you've adequately populated the druid list per the above instructions.
+
+```ruby
+[19] pry(main)> Druid.where.not(id: DruidRetrievalAttempt.select(:druid_id).distinct).limit(10).pluck(:druid)
+   (0.4ms)  SELECT  "druids"."druid" FROM "druids" WHERE "druids"."id" NOT IN (SELECT DISTINCT "druid_retrieval_attempts"."druid_id" FROM "druid_retrieval_attempts") LIMIT ?  [["LIMIT", 10]]
+=> ["changeme:4",
+ "changeme:5",
+ "druid:bb000kq3835",
+ "druid:bb000zn0114",
+ "druid:bb001bb1008",
+ "druid:bb001dq8600",
+ "druid:bb001mf4282",
+ "druid:bb001nx1648",
+ "druid:bb001pn1602",
+ "druid:bb001xb8305"]
+```
+
+## run this code on the shared deployment environment (a.k.a. how to run this on john's burndown box)
+
+
+
 ## run tests on this codebase
 
 Just hacking something together to start and trying to run it against some prod data to get a sense of what responses will look like, and what info seems useful to collect as we start to scale.  So for now, you can manually test basic usage (200, 400, 404 for some known druids) from rails console.  Use the instructions above and these druids:

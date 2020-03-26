@@ -1,5 +1,7 @@
 class Druid < ApplicationRecord
-  # assumes one druid per line.
+  has_many :druid_retrieval_attempts, inverse_of: :druid
+
+  # assumes one druid per line.  dupes are fine, should just add the new ones.
   # limit_adds: add up to this many druids to the DB
   # limit_readlines: read up to this many lines
   def self.add_new_druids_from_file(filename, limit_adds: nil, limit_readlines: nil)
