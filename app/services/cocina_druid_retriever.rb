@@ -8,6 +8,11 @@ class CocinaDruidRetriever
     @druid = druid
   end
 
+  def self.try_retrieving_unseen_druids(max_to_retrieve: Settings.max_unseen_druids_to_retrieve)
+    Druid.unretrieved.limit(max_to_retrieve).find_each { |druid| try_retrieval_and_log_result(druid.druid) }
+    nil
+  end
+
   def self.try_retrieval_and_log_result(druid)
     new(druid).try_retrieval_and_log_result
   end
@@ -25,6 +30,8 @@ class CocinaDruidRetriever
     insert_druid_retrieval_attempt(response.status, response.reason_phrase, output_filename)
 
     response
+  rescue StandardError => e
+    Rails.logger.error("Unexpected error trying to retrieve #{druid} and log result: #{e}")
   end
 
   private

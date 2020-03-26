@@ -1,6 +1,13 @@
 class Druid < ApplicationRecord
   has_many :druid_retrieval_attempts, inverse_of: :druid
 
+  # you probably want to use a limit clause on this, and/or iterate over results using #find_each
+  scope :unretrieved, lambda {
+    where.not(
+      id: DruidRetrievalAttempt.select(:druid_id).distinct
+    )
+  }
+
   # assumes one druid per line.  dupes are fine, should just add the new ones.
   # limit_adds: add up to this many druids to the DB
   # limit_readlines: read up to this many lines
