@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  druid: one
+  response_status: 1
+  response_reason_phrase: MyString
+  output_path: MyString
+
+two:
+  druid: two
+  response_status: 1
+  response_reason_phrase: MyString
+  output_path: MyString

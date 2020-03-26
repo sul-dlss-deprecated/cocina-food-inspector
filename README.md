@@ -12,9 +12,7 @@ This project will attempt to pass existing digital repository objects from Fedor
 1. `RAILS_ENV=production be rails c`
 1. 
 ```ruby
-[1] pry(main)> require('cocina_druid_retriever')
-=> true
-[2] pry(main)> CocinaDruidRetriever.try_retrieval_and_log_result('druid:bb000kg4251') # will also write success message to prod log, and maybe log full response output as json
+[1] pry(main)> CocinaDruidRetriever.try_retrieval_and_log_result('druid:bb000kg4251') # will also write success message to prod log, and maybe log full response output as json
 => #<Faraday::Response:0x00007ff09051c100 ...lots of stuff... >
 ```
 

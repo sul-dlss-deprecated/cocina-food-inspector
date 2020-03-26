@@ -46,7 +46,7 @@ class CocinaDruidRetriever
     end
   end
 
-  # broken out into its own method because we'll likely want to use druid
+  # TODO: broken out into its own method because we'll likely want to use druid
   # trees or pair trees when we get into running this against everything
   def druid_path
     File.join(druid, "#{current_time_str}.json")
