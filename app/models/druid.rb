@@ -15,25 +15,26 @@ class Druid < ApplicationRecord
     druid_file = File.open(filename)
     num_adds = 0
     num_lines_read = 0
-    Rails.logger.debug("filename=#{filename} ; limit_adds=#{limit_adds} ; limit_readlines=#{limit_readlines}")
+    Rails.logger.debug("Druid.add_new_druids_from_file: filename=#{filename} ; limit_adds=#{limit_adds} ; limit_readlines=#{limit_readlines}")
 
     cur_druid = ""
     while(cur_druid) do
-      cur_druid = druid_file.readline&.chomp
-      num_lines_read += 1
-      Rails.logger.debug("Druid.add_new_druids_from_file: cur_druid=#{cur_druid}")
-
-      break unless cur_druid
-      break if limit_adds && num_adds >= limit_adds
-      break if limit_readlines && num_lines_read >= limit_readlines
-
       begin
+        cur_druid = druid_file.readline&.chomp
+        num_lines_read += 1
+        Rails.logger.debug("Druid.add_new_druids_from_file: cur_druid=#{cur_druid}")
+
+        break unless cur_druid
+        break if limit_adds && num_adds >= limit_adds
+        break if limit_readlines && num_lines_read >= limit_readlines
+
         create!(druid: cur_druid)
         num_adds += 1
       rescue ActiveRecord::RecordNotUnique => e
         Rails.logger.info("Druid.add_new_druids_from_file: #{cur_druid} already in DB")
       rescue StandardError => e
-        Rails.logger.error("Druid.add_new_druids_from_file: Unexpected error adding #{cur_druid} to DB: #{e}")
+        Rails.logger.error("Druid.add_new_druids_from_file: Unexpected error adding #{cur_druid} to DB: #{e}, exiting")
+        break # be on the safe side of looping infinitely
       end
     end
 
