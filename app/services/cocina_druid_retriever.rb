@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'dsa_client'
 
 class CocinaDruidRetriever
   attr_reader :druid

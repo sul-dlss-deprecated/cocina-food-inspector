@@ -112,8 +112,9 @@ You can build on this example to find batches of things to queue up for inspecti
 ### use a canned version of this to try to retrieve druids we haven't seen yet
 
 ```
-[7] pry(main)> CocinaDruidRetriever.try_retrieving_unseen_druids(max_to_retrieve: 5)
-  Druid Load (0.3ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."id" NOT IN (SELECT DISTINCT "druid_retrieval_attempts"."druid_id" FROM "druid_retrieval_attempts") ORDER BY "druids"."id" ASC LIMIT ?  [["LIMIT", 5]]
+[1] pry(main)> CocinaDruidRetriever.try_retrieving_unseen_druids(max_to_retrieve: 5)
+/Users/suntzu/.rbenv/versions/2.7.0/lib/ruby/gems/2.7.0/gems/activemodel-5.2.4.2/lib/active_model/type/value.rb:8: warning: The called method `initialize' is defined here
+  Druid Load (0.5ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."id" NOT IN (SELECT DISTINCT "druid_retrieval_attempts"."druid_id" FROM "druid_retrieval_attempts") ORDER BY "druids"."id" ASC LIMIT ?  [["LIMIT", 5]]
 retrieving druid:bb001mf4282
 success: 200 OK retrieving druid:bb001mf4282
 Unexpected error trying to retrieve druid:bb001mf4282 and log result: "\xC3" from ASCII-8BIT to UTF-8
@@ -123,20 +124,20 @@ Unexpected error trying to retrieve druid:bb003dn0409 and log result: "\xC2" fro
 retrieving druid:bb006ys3871
 success: 200 OK retrieving druid:bb006ys3871
 Unexpected error trying to retrieve druid:bb006ys3871 and log result: "\xC2" from ASCII-8BIT to UTF-8
-retrieving druid:bb007ny0600
-success: 200 OK retrieving druid:bb007ny0600
-  Druid Load (0.1ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."druid" = ? LIMIT ?  [["druid", "druid:bb007ny0600"], ["LIMIT", 1]]
-  Druid Load (0.1ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."id" = ? LIMIT ?  [["id", 34], ["LIMIT", 1]]
+retrieving druid:bb008kd6296
+success: 200 OK retrieving druid:bb008kd6296
+  Druid Load (0.2ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."druid" = ? LIMIT ?  [["druid", "druid:bb008kd6296"], ["LIMIT", 1]]
+  Druid Load (0.3ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."id" = ? LIMIT ?  [["id", 38], ["LIMIT", 1]]
    (0.1ms)  begin transaction
-  DruidRetrievalAttempt Create (0.3ms)  INSERT INTO "druid_retrieval_attempts" ("druid_id", "response_status", "response_reason_phrase", "output_path", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["druid_id", 34], ["response_status", 200], ["response_reason_phrase", "OK"], ["output_path", "log/cocina_output/success/druid:bb007ny0600/2020-03-26T05:28:26Z.json"], ["created_at", "2020-03-26 05:28:26.429603"], ["updated_at", "2020-03-26 05:28:26.429603"]]
+  DruidRetrievalAttempt Create (0.5ms)  INSERT INTO "druid_retrieval_attempts" ("druid_id", "response_status", "response_reason_phrase", "output_path", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["druid_id", 38], ["response_status", 200], ["response_reason_phrase", "OK"], ["output_path", "log/cocina_output/success/druid:bb008kd6296/2020-03-26T05:34:42Z.json"], ["created_at", "2020-03-26 05:34:42.584797"], ["updated_at", "2020-03-26 05:34:42.584797"]]
+   (0.8ms)  commit transaction
+retrieving druid:bb008rc3511
+failure: 500 Internal Server Error retrieving druid:bb008rc3511 : {"status":500,"error":"Internal Server Error"}
+  Druid Load (0.1ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."druid" = ? LIMIT ?  [["druid", "druid:bb008rc3511"], ["LIMIT", 1]]
+  Druid Load (0.1ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."id" = ? LIMIT ?  [["id", 39], ["LIMIT", 1]]
+   (0.0ms)  begin transaction
+  DruidRetrievalAttempt Create (0.4ms)  INSERT INTO "druid_retrieval_attempts" ("druid_id", "response_status", "response_reason_phrase", "output_path", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["druid_id", 39], ["response_status", 500], ["response_reason_phrase", "Internal Server Error"], ["output_path", "log/cocina_output/failure/druid:bb008rc3511/2020-03-26T05:34:42Z.json"], ["created_at", "2020-03-26 05:34:42.939230"], ["updated_at", "2020-03-26 05:34:42.939230"]]
    (3.1ms)  commit transaction
-retrieving druid:bb008cf6344
-success: 200 OK retrieving druid:bb008cf6344
-  Druid Load (0.1ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."druid" = ? LIMIT ?  [["druid", "druid:bb008cf6344"], ["LIMIT", 1]]
-  Druid Load (0.1ms)  SELECT  "druids".* FROM "druids" WHERE "druids"."id" = ? LIMIT ?  [["id", 35], ["LIMIT", 1]]
-   (0.1ms)  begin transaction
-  DruidRetrievalAttempt Create (0.4ms)  INSERT INTO "druid_retrieval_attempts" ("druid_id", "response_status", "response_reason_phrase", "output_path", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?)  [["druid_id", 35], ["response_status", 200], ["response_reason_phrase", "OK"], ["output_path", "log/cocina_output/success/druid:bb008cf6344/2020-03-26T05:28:26Z.json"], ["created_at", "2020-03-26 05:28:26.965296"], ["updated_at", "2020-03-26 05:28:26.965296"]]
-   (2.7ms)  commit transaction
 => nil
 ```
 
