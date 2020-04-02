@@ -30,7 +30,7 @@ class CocinaDruidRetriever
 
     response
   rescue StandardError => e
-    Rails.logger.error("Unexpected error trying to retrieve #{druid} and log result: #{e}")
+    Rails.logger.error("Unexpected error trying to retrieve #{druid} and log result: #{Util.exception_msg_and_backtrace_str(e)}")
   end
 
   private
@@ -66,6 +66,8 @@ class CocinaDruidRetriever
       file.write(druid_output)
     end
     output_filename
+  rescue StandardError => e
+    Rails.logger.error("Unexpected error trying to write druid response to file: #{Util.exception_msg_and_backtrace_str(e)}")
   end
 
   # TODO: broken out into its own method because we'll likely want to use druid
