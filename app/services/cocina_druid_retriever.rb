@@ -49,13 +49,13 @@ class CocinaDruidRetriever
   # returns the name of the output file
   def write_cocina_success_to_file(response)
     return unless Settings.cocina_output.success.should_output
-    write_druid_response_to_file(Settings.cocina_output.success.location, JSON.pretty_generate(response.to_hash))
+    write_druid_response_to_file(Settings.cocina_output.success.location, Util.faraday_response_to_json(response))
   end
 
   # returns the name of the output file
   def write_cocina_failure_to_file(response)
     return unless Settings.cocina_output.failure.should_output
-    write_druid_response_to_file(Settings.cocina_output.failure.location, JSON.pretty_generate(response.to_hash))
+    write_druid_response_to_file(Settings.cocina_output.failure.location, Util.faraday_response_to_json(response))
   end
 
   # returns the name of the output file
