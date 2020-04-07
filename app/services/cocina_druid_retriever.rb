@@ -60,7 +60,7 @@ class CocinaDruidRetriever
 
   # returns the name of the output file
   def write_druid_response_to_file(output_path, druid_output)
-    output_filename = File.join(output_path, druid_path)
+    output_filename = druid_path(output_path)
     ensure_containing_dir(output_filename)
     File.open(output_filename, 'w') do |file|
       file.write(druid_output)
@@ -70,10 +70,9 @@ class CocinaDruidRetriever
     Rails.logger.error("Unexpected error trying to write druid response to file: #{Util.exception_msg_and_backtrace_str(e)}")
   end
 
-  # TODO: broken out into its own method because we'll likely want to use druid
-  # trees or pair trees when we get into running this against everything
-  def druid_path
-    File.join(druid, "#{current_time_str}.json")
+  def druid_path(output_path)
+    d = DruidTools::Druid.new(druid, output_path) # https://github.com/sul-dlss/druid-tools/#get-attributes-and-paths
+    File.join(d.path, "#{current_time_str}.json") # TODO: maybe omit the .json or get clever and lop it off in cases where json couldn't be written, e.g. when JSON writer runs into char it can't handle
   end
 
   def current_time_str
