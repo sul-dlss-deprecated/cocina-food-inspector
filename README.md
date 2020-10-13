@@ -1,4 +1,4 @@
-_ deprecated in favor of the approach in https://github.com/sul-dlss/dor-services-app/pull/1084 _
+_deprecated in favor of the approach in https://github.com/sul-dlss/dor-services-app/pull/1084_
 
 # Cocina Food Inspector
 
