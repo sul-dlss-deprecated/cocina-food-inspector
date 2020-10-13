@@ -1,3 +1,5 @@
+_ deprecated in favor of the approach in https://github.com/sul-dlss/dor-services-app/pull/1084 _
+
 # Cocina Food Inspector
 
 This project will attempt to pass existing digital repository objects from Fedora through `Cocina::Mapper` by using the `Objects#show` route of dor-services-app.  Results will be logged.
